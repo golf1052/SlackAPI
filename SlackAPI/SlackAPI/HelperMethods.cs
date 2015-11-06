@@ -26,5 +26,10 @@ namespace golf1052.SlackAPI
                 throw new SlackException();
             }
         }
+
+        public static DateTime EpochToDateTime(long date)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(date);
+        }
     }
 }

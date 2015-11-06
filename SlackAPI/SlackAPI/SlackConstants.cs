@@ -15,5 +15,11 @@ namespace golf1052.SlackAPI
             Sms,
             App
         }
+
+        public enum Presence
+        {
+            Active,
+            Away
+        }
     }
 }

@@ -41,9 +41,12 @@
   <ItemGroup>
     <Compile Include="HelperMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlackChannel.cs" />
     <Compile Include="SlackConstants.cs" />
     <Compile Include="SlackException.cs" />
     <Compile Include="SlackRTMClientBase.cs" />
+    <Compile Include="SlackTeam.cs" />
+    <Compile Include="SlackTeamState.cs" />
     <Compile Include="SlackUser.cs" />
     <Compile Include="SlackUserProfile.cs" />
   </ItemGroup>

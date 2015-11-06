@@ -44,6 +44,8 @@
     <Compile Include="SlackConstants.cs" />
     <Compile Include="SlackException.cs" />
     <Compile Include="SlackRTMClientBase.cs" />
+    <Compile Include="SlackUser.cs" />
+    <Compile Include="SlackUserProfile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

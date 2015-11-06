@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -78,6 +79,8 @@ namespace golf1052.SlackAPI
                 }
             }
             while (DateTime.UtcNow - initialConnectionTime < TimeSpan.FromSeconds(30));
+
+            Debug.WriteLine(responseObject.ToString());
 
             if (!connected)
             {

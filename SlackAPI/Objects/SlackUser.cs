@@ -5,10 +5,10 @@ using Newtonsoft.Json.Linq;
 
 namespace golf1052.SlackAPI.Objects
 {
-    public class SlackUser
+    public class SlackUser : SlackObject
     {   
-        [JsonProperty("id")]
-        public string Id { get; private set; }
+        //[JsonProperty("id")]
+        //public string Id { get; private set; }
 
         [JsonProperty("team_id")]
         public string TeamId { get; private set; }

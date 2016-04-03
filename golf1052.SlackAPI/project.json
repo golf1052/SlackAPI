@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.0.0",
   "description": "SlackAPI Console Application",
   "authors": [ "" ],
   "tags": [ "" ],
@@ -11,7 +11,7 @@
   },
 
   "tooling": {
-    "defaultNamespace": "SlackAPI"
+    "defaultNamespace": "golf1052.SlackAPI"
   },
 
   "dependencies": {

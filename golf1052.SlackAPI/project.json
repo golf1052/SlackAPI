@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "description": "SlackAPI Console Application",
+  "authors": [ "" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "tooling": {
+    "defaultNamespace": "golf1052.SlackAPI"
+  },
+
+  "dependencies": {
+    "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
+    "golf1052.Trexler": ""
+  },
+
+  "commands": {
+    "SlackAPI": "SlackAPI"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+        "Newtonsoft.Json": "8.0.3",
+        "System.Net.Http": "4.0.1-beta-23516"
+      }
+    },
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.Console": "4.0.0-beta-23516",
+        "System.Linq": "4.0.1-beta-23516",
+        "System.Threading": "4.0.11-beta-23516",
+        "Newtonsoft.Json": "8.0.3",
+        "System.Net.Http": "4.0.1-beta-23516"
+      }
+    }
+  }
+}

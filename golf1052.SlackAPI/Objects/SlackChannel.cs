@@ -32,7 +32,7 @@ namespace golf1052.SlackAPI.Objects
         public bool General { get; private set; }
 
         [JsonProperty("members")]
-        public IList<string> Members { get; private set; }
+        public List<string> Members { get; private set; }
 
         [JsonProperty("topic")]
         public SlackChannelTopic Topic { get; private set; }

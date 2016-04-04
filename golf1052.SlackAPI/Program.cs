@@ -22,7 +22,6 @@ namespace golf1052.SlackAPI
             string responseString = responseStringTask.Result;
             JObject responseObject = JObject.Parse(responseString);
             JArray channelsA = (JArray)responseObject["groups"];
-            SlackCore core = new SlackCore();
             Debug.WriteLine("");
         }
     }

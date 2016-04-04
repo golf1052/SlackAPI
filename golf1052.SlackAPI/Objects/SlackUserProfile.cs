@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 
-namespace golf1052.SlackAPI
+namespace golf1052.SlackAPI.Objects
 {
     public class SlackUserProfile
     {

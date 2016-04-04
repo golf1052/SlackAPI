@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -19,8 +17,9 @@ namespace golf1052.SlackAPI.Converters
             }
             else
             {
-                long seconds = (long)reader.Value;
-                return epoch.AddSeconds(seconds);
+                decimal value = decimal.Parse(reader.Value.ToString(), CultureInfo.InvariantCulture);
+                DateTime time = new DateTime(621355968000000000 + (long)(value * 10000000m)).ToLocalTime();
+                return time;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -49,6 +49,47 @@ namespace golf1052.SlackAPI
                 }
             }
             return reactions;
+        }
+        
+        public async Task ReactionsAdd(string name, string file = null, string fileComment = null, string channel = null, string timestamp = null)
+        {
+            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("reactions.add");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("required", nameof(name));
+            }
+            if (string.IsNullOrEmpty(file) && string.IsNullOrEmpty(fileComment) && (string.IsNullOrEmpty(channel) || string.IsNullOrEmpty(timestamp)))
+            {
+                throw new ArgumentException($"One of {nameof(file)}, {nameof(fileComment)}, or the combination of {nameof(channel)} and {nameof(timestamp)} must be specified.");
+            }
+
+            url.SetQueryParam("name", name);
+            if (file != null)
+            {
+                url.SetQueryParam("file", file);
+            }
+            else if (fileComment != null)
+            {
+                url.SetQueryParam("file_comment", fileComment);
+            }
+            else
+            {
+                url.SetQueryParam("channel", channel)
+                .SetQueryParam("timestamp", timestamp);
+            }
+            await DoAuthSlackCall(new Uri(url));
+        }
+
+        public async Task<List<SlackChannel>> ChannelsList(int excludeArchived = 0)
+        {
+            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("channels.list").SetQueryParam("exclude_archived", excludeArchived);
+            JObject response = await DoAuthSlackCall(new Uri(url));
+            List<SlackChannel> channels = new List<SlackChannel>();
+            foreach (JObject item in (JArray) response["channels"])
+            {
+                channels.Add(JsonConvert.DeserializeObject<SlackChannel>(item.ToString()));
+            }
+            return channels;
         }
 
         public async Task<List<SlackUser>> UsersList(int presence = 0)

@@ -233,3 +233,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 golf1052.SlackAPI/Secrets.cs
+golf1052.SlackAPI/project.lock.json

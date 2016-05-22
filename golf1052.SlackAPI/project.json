@@ -1,45 +1,50 @@
 {
-  "version": "1.0.0",
-  "description": "SlackAPI Console Application",
-  "authors": [ "" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-
-  "compilationOptions": {
-    "emitEntryPoint": true
-  },
-
-  "tooling": {
-    "defaultNamespace": "golf1052.SlackAPI"
-  },
-
-  "dependencies": {
-    "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
-    "golf1052.Trexler": ""
-  },
-
-  "commands": {
-    "SlackAPI": "SlackAPI"
-  },
-
-  "frameworks": {
-    "dnx451": {
-      "dependencies": {
-        "Newtonsoft.Json": "8.0.3",
-        "System.Net.Http": "4.0.1-beta-23516"
-      }
+    "version": "1.0.0",
+    "description": "SlackAPI Console Application",
+    "authors": [
+        ""
+    ],
+    "tags": [
+        ""
+    ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "compilationOptions": {
+        "emitEntryPoint": true
     },
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Console": "4.0.0-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Threading": "4.0.11-beta-23516",
+    "tooling": {
+        "defaultNamespace": "golf1052.SlackAPI"
+    },
+    "dependencies": {
+        "System.Runtime.Serialization.Primitives": "4.1.1-rc2-24027",
         "Newtonsoft.Json": "8.0.3",
-        "System.Net.Http": "4.0.1-beta-23516"
-      }
+        "golf1052.Trexler": {
+            "target": "project",
+            "version": "1.0.0"
+        }
+    },
+    "frameworks": {
+        "net451": {
+            "dependencies": {
+                "System.Net.Http": "4.0.0"
+            }
+        },
+        "netstandard1.5": {
+            "imports": [
+                "dnxcore50"
+            ],
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "version": "1.0.0-*",
+                    "type": "platform"
+                },
+                "Microsoft.CSharp": "4.0.1-rc2-24027",
+                "System.Collections": "4.0.11-rc2-24027",
+                "System.Console": "4.0.0-rc2-24027",
+                "System.Linq": "4.1.0-rc2-24027",
+                "System.Threading": "4.0.11-rc2-24027",
+                "System.Net.Http": "4.0.1-rc2-24027"
+            }
+        }
     }
-  }
 }

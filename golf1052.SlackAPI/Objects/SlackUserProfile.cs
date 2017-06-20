@@ -36,6 +36,12 @@ namespace golf1052.SlackAPI.Objects
         [JsonProperty("phone")]
         public string Phone { get; private set; }
 
+        [JsonProperty("status_emoji")]
+        public string StatusEmoji { get; private set; }
+
+        [JsonProperty("status_text")]
+        public string StatusText { get; private set; }
+
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; private set; }
         

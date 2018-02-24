@@ -57,7 +57,10 @@ namespace golf1052.SlackAPI.Objects
             {
                 if (rest.Key.StartsWith("image"))
                 {
-                    Images.Add(rest.Key, new Uri((string)rest.Value));
+                    if (!string.IsNullOrEmpty((string)rest.Value))
+                    {
+                        Images.Add(rest.Key, new Uri((string)rest.Value));
+                    }
                 }
             }
         }

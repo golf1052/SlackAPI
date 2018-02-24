@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using golf1052.Trexler;
+using Flurl;
 using golf1052.SlackAPI.Objects;
 using golf1052.SlackAPI.Events;
 
@@ -27,7 +27,7 @@ namespace golf1052.SlackAPI
 
         public async Task<List<SlackEvent>> ReactionsList(string user = null, bool full = false, int count = 100, int page = 1, bool allItems = false)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("reactions.list");
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("reactions.list");
             if (!string.IsNullOrEmpty(user))
             {
                 url.SetQueryParam("user", user);
@@ -53,7 +53,7 @@ namespace golf1052.SlackAPI
         
         public async Task ReactionsAdd(string name, string file = null, string fileComment = null, string channel = null, string timestamp = null)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("reactions.add");
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("reactions.add");
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException("required", nameof(name));
@@ -82,7 +82,7 @@ namespace golf1052.SlackAPI
 
         public async Task<List<SlackChannel>> ChannelsList(int excludeArchived = 0)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("channels.list").SetQueryParam("exclude_archived", excludeArchived);
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("channels.list").SetQueryParam("exclude_archived", excludeArchived);
             JObject response = await DoAuthSlackCall(new Uri(url));
             List<SlackChannel> channels = new List<SlackChannel>();
             foreach (JObject item in (JArray) response["channels"])
@@ -94,7 +94,7 @@ namespace golf1052.SlackAPI
 
         public async Task<List<SlackUser>> UsersList(int presence = 0)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("users.list").SetQueryParam("presence", presence);
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("users.list").SetQueryParam("presence", presence);
             JObject response = await DoAuthSlackCall(new Uri(url));
             List<SlackUser> users = new List<SlackUser>();
             foreach (JObject item in (JArray)response["members"])
@@ -106,7 +106,7 @@ namespace golf1052.SlackAPI
 
         public static Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegments("oauth", "authorize");
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegments("oauth", "authorize");
             if (string.IsNullOrEmpty(clientId))
             {
                 throw new ArgumentException("required", nameof(clientId));
@@ -160,7 +160,7 @@ namespace golf1052.SlackAPI
                 throw new ArgumentException("required", nameof(code));
             }
 
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment("oauth.access").SetQueryParams(new Dictionary<string, object>()
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("oauth.access").SetQueryParams(new Dictionary<string, object>()
             {
                 { "client_id", clientId },
                 { "client_secret", clientSecret },
@@ -177,13 +177,13 @@ namespace golf1052.SlackAPI
 
         public static async Task<JObject> DoSlackCall(string endpoint, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
         {
-            TrexUri url = new TrexUri(SlackConstants.BaseUrl).AppendPathSegment(endpoint);
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment(endpoint);
             return await SlackCore.DoSlackCall(url, all, method, args);
         }
 
         public async Task<JObject> DoAuthSlackCall(Uri uri, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
         {
-            TrexUri url = new TrexUri(uri.ToString());
+            Url url = new Url(uri.ToString());
             url.SetQueryParam("token", AccessToken);
             return await SlackCore.DoSlackCall(new Uri(url), all, method, args);
         }
@@ -220,7 +220,7 @@ namespace golf1052.SlackAPI
                     int page = (int)paging["page"];
                     for (int i = 1; i < pages; i++)
                     {
-                        TrexUri url = new TrexUri(uri.ToString());
+                        Url url = new Url(uri.ToString());
                         page++;
                         url.SetQueryParam("page", page);
                         JObject pageResponse = await DoSlackCall(new Uri(url), false, method, args);

@@ -104,6 +104,28 @@ namespace golf1052.SlackAPI
             return users;
         }
 
+        public async Task<List<SlackConversation>> UsersConversations(string cursor = null,
+            string types = null,
+            int limit = 100,
+            string user = null)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("users.conversations")
+                .SetQueryParam("cursor", cursor)
+                .SetQueryParam("types", types)
+                .SetQueryParam("user", user);
+            if (limit != 100)
+            {
+                url.SetQueryParam("limit", limit);
+            }
+            JObject response = await DoAuthSlackCall(new Uri(url));
+            List<SlackConversation> conversations = new List<SlackConversation>();
+            foreach (JObject item in (JArray)response["channels"])
+            {
+                conversations.Add(JsonConvert.DeserializeObject<SlackConversation>(item.ToString()));
+            }
+            return conversations;
+        }
+
         public static Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegments("oauth", "authorize");

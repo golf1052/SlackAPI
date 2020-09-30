@@ -80,12 +80,27 @@ namespace golf1052.SlackAPI
             await DoAuthSlackCall(new Uri(url));
         }
 
+        [Obsolete]
         public async Task<List<SlackChannel>> ChannelsList(int excludeArchived = 0)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("channels.list").SetQueryParam("exclude_archived", excludeArchived);
             JObject response = await DoAuthSlackCall(new Uri(url));
             List<SlackChannel> channels = new List<SlackChannel>();
             foreach (JObject item in (JArray) response["channels"])
+            {
+                channels.Add(JsonConvert.DeserializeObject<SlackChannel>(item.ToString()));
+            }
+            return channels;
+        }
+
+        public async Task<List<SlackChannel>> ConversationsList(bool excludeArchived = false, string types = "public_channel")
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("conversations.list")
+                .SetQueryParam("exclude_archived", excludeArchived)
+                .SetQueryParam("types", types);
+            JObject response = await DoAuthSlackCall(new Uri(url));
+            List<SlackChannel> channels = new List<SlackChannel>();
+            foreach (JObject item in (JArray)response["channels"])
             {
                 channels.Add(JsonConvert.DeserializeObject<SlackChannel>(item.ToString()));
             }

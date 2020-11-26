@@ -107,6 +107,23 @@ namespace golf1052.SlackAPI
             return channels;
         }
 
+        public async Task<string> ConversationsOpen(string channel = null, bool returnIm = false, List<string> users = null)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("conversations.open");
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("return_im", returnIm.ToString());
+            if (!string.IsNullOrEmpty(channel))
+            {
+                args.Add("channel", channel);
+            }
+            if (users != null && users.Count > 0)
+            {
+                args.Add("users", string.Join(",", users));
+            }
+            JObject response = await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
+            return (string)response["channel"]["id"];
+        }
+
         public async Task<List<SlackUser>> UsersList(int presence = 0)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("users.list").SetQueryParam("presence", presence);

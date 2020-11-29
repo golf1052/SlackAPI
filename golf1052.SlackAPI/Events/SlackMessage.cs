@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace golf1052.SlackAPI.Events
 {
-    public class Message : SlackEvent
+    public class SlackMessage : SlackEvent
     {
         public enum Subtypes
         {
@@ -51,10 +51,15 @@ namespace golf1052.SlackAPI.Events
         public string Text { get; private set; }
 
         [JsonProperty("ts")]
-        [JsonConverter(typeof(EpochDateTimeConverter))]
-        public DateTime Timestamp { get; private set; }
+        public string Timestamp { get; private set; }
 
-        public Subtypes Subtype { get; private set; }
+        [JsonProperty("thread_ts")]
+        public string ThreadTimestamp { get; private set; }
+
+        [JsonProperty("subtype")]
+        public string Subtype { get; private set; }
+
+        public Subtypes SubtypeEnum { get; private set; }
 
         [JsonProperty("hidden")]
         public bool Hidden { get; private set; }
@@ -68,9 +73,16 @@ namespace golf1052.SlackAPI.Events
         [JsonProperty("reactions")]
         public List<Reaction> Reactions { get; private set; }
 
-        public Message()
+        [JsonProperty("message")]
+        public SlackMessage Message { get; private set; }
+
+        [JsonProperty("attachments")]
+        public List<Attachment> Attachments { get; private set; }
+
+        public SlackMessage()
         {
             Reactions = new List<Reaction>();
+            Attachments = new List<Attachment>();
         }
 
         public static Subtypes StringToMessageSubtype(string subtype)

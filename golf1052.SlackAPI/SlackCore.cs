@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Flurl;
 using golf1052.SlackAPI.Objects;
 using golf1052.SlackAPI.Events;
@@ -14,10 +15,18 @@ namespace golf1052.SlackAPI
     public class SlackCore
     {
         private string AccessToken { get; set; }
+        private JsonSerializerSettings jsonSerializerSettings;
 
         public SlackCore(string accessToken)
         {
             AccessToken = accessToken;
+            jsonSerializerSettings = new JsonSerializerSettings()
+            {
+                ContractResolver = new DefaultContractResolver()
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                }
+            };
         }
 
         public async Task ApiTest(string error = null, params string[] properties)
@@ -44,7 +53,7 @@ namespace golf1052.SlackAPI
             {
                 if ((string)item["type"] == "message")
                 {
-                    Message message = JsonConvert.DeserializeObject<Message>(item["message"].ToString());
+                    SlackMessage message = JsonConvert.DeserializeObject<SlackMessage>(item["message"].ToString(), jsonSerializerSettings);
                     reactions.Add(message);
                 }
             }

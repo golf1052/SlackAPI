@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "golf1052.SlackAPI", "golf1052.SlackAPI\golf1052.SlackAPI.csproj", "{CF4F0A5E-B468-4B3E-9A68-21025EB95B90}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "golf1052.Trexler", "..\Trexler\golf1052.Trexler\golf1052.Trexler.csproj", "{3C4495F4-21D6-4B31-9521-9F994E78914E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +15,11 @@ Global
 		{CF4F0A5E-B468-4B3E-9A68-21025EB95B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF4F0A5E-B468-4B3E-9A68-21025EB95B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF4F0A5E-B468-4B3E-9A68-21025EB95B90}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C4495F4-21D6-4B31-9521-9F994E78914E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C4495F4-21D6-4B31-9521-9F994E78914E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C4495F4-21D6-4B31-9521-9F994E78914E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C4495F4-21D6-4B31-9521-9F994E78914E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BDFC747-9775-4A5F-8501-2FD4E8FC8433}
 	EndGlobalSection
 EndGlobal

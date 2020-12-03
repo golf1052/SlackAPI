@@ -5,7 +5,7 @@ using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class Image
+    public class Image : IBlock
     {
         public string Type { get; private set; }
         public string ImageUrl { get; set; }

@@ -6,7 +6,7 @@ using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class Input
+    public class Input : IBlock
     {
         public string Type { get; private set; }
         public TextObject Label { get; set; }

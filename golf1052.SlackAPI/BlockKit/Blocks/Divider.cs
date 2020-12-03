@@ -4,7 +4,7 @@ using System.Text;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class Divider
+    public class Divider : IBlock
     {
         public string Type { get; private set; }
         public string BlockId { get; set; }

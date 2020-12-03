@@ -4,7 +4,7 @@ using System.Text;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class File
+    public class File : IBlock
     {
         public string Type { get; private set; }
         public string ExternalId { get; set; }

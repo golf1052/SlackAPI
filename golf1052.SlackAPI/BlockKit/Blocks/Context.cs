@@ -6,7 +6,7 @@ using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class Context
+    public class Context : IBlock
     {
         public string Type { get; private set; }
         public List<object> Elements { get; set; }

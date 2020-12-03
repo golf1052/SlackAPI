@@ -5,7 +5,7 @@ using golf1052.SlackAPI.BlockKit.BlockElements;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
 {
-    public class Actions
+    public class Actions : IBlock
     {
         public string Type { get; private set; }
         public List<object> Elements { get; set; }

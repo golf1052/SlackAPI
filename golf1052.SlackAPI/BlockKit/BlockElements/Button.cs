@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using golf1052.SlackAPI.BlockKit.CompositionObjects;
+using Newtonsoft.Json;
 
 namespace golf1052.SlackAPI.BlockKit.BlockElements
 {
-    public class Button
+    public class Button : IBlockElement
     {
         public string Type { get; private set; }
         public TextObject Text { get; set; }
@@ -15,6 +16,19 @@ namespace golf1052.SlackAPI.BlockKit.BlockElements
         public string Style { get; set; }
         public ConfirmationDialogObject Confirm { get; set; }
 
+        [JsonConstructor]
+        private Button(TextObject text, string actionId, string url, string value, string style, ConfirmationDialogObject confirm)
+        {
+            Type = "button";
+            Text = text;
+            ActionId = actionId;
+            Url = url;
+            Value = value;
+            Style = style;
+            Confirm = confirm;
+        }
+
+        
         public Button(string text, string actionId, string url, string value, string style, ConfirmationDialogObject confirm)
         {
             if (text.Length > 75)

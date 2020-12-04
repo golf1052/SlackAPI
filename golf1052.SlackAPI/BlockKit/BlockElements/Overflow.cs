@@ -5,7 +5,7 @@ using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.BlockElements
 {
-    public class Overflow
+    public class Overflow : IBlockElement
     {
         public string Type { get; private set; }
         public string ActionId { get; set; }

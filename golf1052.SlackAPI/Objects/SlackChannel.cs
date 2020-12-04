@@ -42,5 +42,8 @@ namespace golf1052.SlackAPI.Objects
 
         [JsonProperty("num_members")]
         public int NumMembers { get; private set; }
+
+        [JsonProperty("user")]
+        public string User { get; private set; }
     }
 }

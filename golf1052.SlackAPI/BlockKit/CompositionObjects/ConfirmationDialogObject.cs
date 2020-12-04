@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace golf1052.SlackAPI.BlockKit.CompositionObjects
 {
@@ -12,6 +13,7 @@ namespace golf1052.SlackAPI.BlockKit.CompositionObjects
         public TextObject Deny { get; set; }
         public string Style { get; set; }
 
+        [JsonConstructor]
         public ConfirmationDialogObject(string title, TextObject text, string confirm, string deny, string style)
         {
             if (title.Length > 100)

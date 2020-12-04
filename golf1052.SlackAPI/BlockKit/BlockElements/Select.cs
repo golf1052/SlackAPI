@@ -5,7 +5,7 @@ using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.BlockElements
 {
-    public abstract class Select
+    public abstract class Select : IBlockElement
     {
         public string Type { get; protected set; }
         public string ActionId { get; set; }

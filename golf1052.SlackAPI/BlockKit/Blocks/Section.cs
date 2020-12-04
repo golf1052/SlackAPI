@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using golf1052.SlackAPI.BlockKit.BlockElements;
 using golf1052.SlackAPI.BlockKit.CompositionObjects;
 
 namespace golf1052.SlackAPI.BlockKit.Blocks
@@ -11,9 +12,9 @@ namespace golf1052.SlackAPI.BlockKit.Blocks
         public TextObject Text { get; set; }
         public string BlockId { get; set; }
         public List<TextObject> Fields { get; set; }
-        public object Accessory { get; set; }
+        public IBlockElement Accessory { get; set; }
 
-        public Section(TextObject text, string blockId, List<TextObject> fields, object accessory)
+        public Section(TextObject text, string blockId, List<TextObject> fields, IBlockElement accessory)
         {
             if (text != null && text.Text.Length > 3000)
             {
@@ -41,7 +42,12 @@ namespace golf1052.SlackAPI.BlockKit.Blocks
                 }
             }
 
-            // TODO: Add accessory constraint on block element objects
+            if (accessory != null && !(accessory is Button) && !(accessory is Checkbox) && !(accessory is DatePicker) &&
+                !(accessory is BlockElements.Image) && !(accessory is Overflow) && !(accessory is Select) &&
+                !(accessory is PlainTextInput) && !(accessory is RadioButton) && !(accessory is TimePicker))
+            {
+                throw new ArgumentException($"{nameof(accessory)} must be type {typeof(Button)}, {typeof(Checkbox)}, {typeof(DatePicker)}, {typeof(BlockElements.Image)}, {typeof(Overflow)}, {typeof(Select)}, {typeof(PlainTextInput)}, {typeof(RadioButton)}, or {typeof(TimePicker)}");
+            }
 
             Type = "section";
             Text = text;

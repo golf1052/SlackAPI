@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace golf1052.SlackAPI.BlockKit.CompositionObjects
 {
@@ -11,6 +12,7 @@ namespace golf1052.SlackAPI.BlockKit.CompositionObjects
         public bool? Emoji { get; set; }
         public bool? Verbatim { get; set; }
 
+        [JsonConstructor]
         public TextObject(string type, string text, bool? emoji, bool? verbatim)
         {
             if (type != "plain_text" && type != "mrkdwn")

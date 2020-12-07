@@ -23,10 +23,10 @@ namespace golf1052.SlackAPI.BlockKit.Blocks
                 throw new ArgumentException($"{nameof(label)} must be 2000 characters or less.");
             }
 
-            if (!(element is TextObject) && !(element is Checkbox) && !(element is RadioButton) && !(element is Select) && !(element is DatePicker))
-            {
-                throw new ArgumentException($"{nameof(element)} must be type {typeof(TextObject)}, {typeof(Checkbox)}, {typeof(RadioButton)}, {typeof(Select)}, or {typeof(DatePicker)}.");
-            }
+            //if (!(element is TextObject) && !(element is Checkbox) && !(element is RadioButton) && !(element is Select) && !(element is DatePicker))
+            //{
+            //    throw new ArgumentException($"{nameof(element)} must be type {typeof(TextObject)}, {typeof(Checkbox)}, {typeof(RadioButton)}, {typeof(Select)}, or {typeof(DatePicker)}.");
+            //}
 
             if (!string.IsNullOrEmpty(blockId) && blockId.Length > 255)
             {

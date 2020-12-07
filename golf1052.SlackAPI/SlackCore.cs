@@ -9,6 +9,7 @@ using Newtonsoft.Json.Serialization;
 using Flurl;
 using golf1052.SlackAPI.Objects;
 using golf1052.SlackAPI.Events;
+using golf1052.SlackAPI.BlockKit.Blocks;
 
 namespace golf1052.SlackAPI
 {
@@ -20,13 +21,7 @@ namespace golf1052.SlackAPI
         public SlackCore(string accessToken)
         {
             AccessToken = accessToken;
-            jsonSerializerSettings = new JsonSerializerSettings()
-            {
-                ContractResolver = new DefaultContractResolver()
-                {
-                    NamingStrategy = new SnakeCaseNamingStrategy()
-                }
-            };
+            jsonSerializerSettings = new HelperMethods().GetBlockKitSerializer();
         }
 
         public async Task ApiTest(string error = null, params string[] properties)
@@ -165,6 +160,79 @@ namespace golf1052.SlackAPI
                 conversations.Add(JsonConvert.DeserializeObject<SlackConversation>(item.ToString()));
             }
             return conversations;
+        }
+
+        public async Task ChatPostMessage(string text, string channel, bool? asUser = null, JObject attachments = null,
+            List<IBlock> blocks = null, string iconEmoji = null, string iconUrl = null, bool? linkNames = null,
+            bool? mrkdwn = null, string parse = null, bool? replyBroadcast = null, string threadTs = null,
+            bool? unfurlLinks = null, bool? unfurlMedia = null, string username = null)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("chat.postMessage");
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("text", text);
+            args.Add("channel", channel);
+            if (asUser != null)
+            {
+                args.Add("as_user", asUser.Value.ToString());
+            }
+            if (attachments != null)
+            {
+                args.Add("attachments", attachments.ToString(Formatting.None));
+            }
+            if (blocks != null)
+            {
+                args.Add("blocks", JsonConvert.SerializeObject(blocks, Formatting.None, jsonSerializerSettings));
+            }
+            if (iconEmoji != null)
+            {
+                args.Add("icon_emoji", iconEmoji);
+            }
+            if (iconUrl != null)
+            {
+                args.Add("icon_url", iconUrl);
+            }
+            if (linkNames != null)
+            {
+                args.Add("link_names", linkNames.Value.ToString());
+            }
+            if (mrkdwn != null)
+            {
+                args.Add("mrkdwn", mrkdwn.Value.ToString());
+            }
+            if (parse != null)
+            {
+                args.Add("parse", parse);
+            }
+            if (replyBroadcast != null)
+            {
+                args.Add("reply_broadcast", replyBroadcast.Value.ToString());
+            }
+            if (threadTs != null)
+            {
+                args.Add("thread_ts", threadTs);
+            }
+            if (unfurlLinks != null)
+            {
+                args.Add("unfurl_links", unfurlLinks.Value.ToString());
+            }
+            if (unfurlMedia != null)
+            {
+                args.Add("unfurl_media", unfurlMedia.Value.ToString());
+            }
+            if (username != null)
+            {
+                args.Add("username", username);
+            }
+            await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
+        }
+
+        public async Task ViewsPublish(string userId, SlackViewObject view)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("views.publish");
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("user_id", userId);
+            args.Add("view", JsonConvert.SerializeObject(view, Formatting.None, jsonSerializerSettings));
+            await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
         }
 
         public static Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)

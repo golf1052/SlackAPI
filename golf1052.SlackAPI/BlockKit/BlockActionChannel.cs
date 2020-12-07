@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace golf1052.SlackAPI.Objects.Responses
+namespace golf1052.SlackAPI.BlockKit
 {
     public class BlockActionChannel
     {

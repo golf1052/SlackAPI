@@ -379,7 +379,15 @@ namespace golf1052.SlackAPI
             }
             else
             {
-                throw new Exception("not ok");
+                string argsString = string.Empty;
+                if (args != null)
+                {
+                    foreach (KeyValuePair<string, string> arg in args)
+                    {
+                        argsString += arg.Key + "=" + arg.Value + " ";
+                    }
+                }
+                throw new Exception($"Error: {(string)responseObject["error"]}\nURL: {uri.ToString()}\nMethod: {method.ToString()}\nArgs: {argsString}");
             }
         }
     }

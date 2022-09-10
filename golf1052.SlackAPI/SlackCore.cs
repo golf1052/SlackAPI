@@ -10,18 +10,27 @@ using Flurl;
 using golf1052.SlackAPI.Objects;
 using golf1052.SlackAPI.Events;
 using golf1052.SlackAPI.BlockKit.Blocks;
+using System.Threading;
 
 namespace golf1052.SlackAPI
 {
     public class SlackCore
     {
         private string AccessToken { get; set; }
-        private JsonSerializerSettings jsonSerializerSettings;
+        private readonly HttpClient httpClient;
+        private readonly JsonSerializerSettings jsonSerializerSettings;
+        private readonly Dictionary<string, SemaphoreSlim> apiRateLimits;
 
-        public SlackCore(string accessToken)
+        public SlackCore(string accessToken) : this(accessToken, new HttpClient(), new Dictionary<string, SemaphoreSlim>())
+        {
+        }
+
+        public SlackCore(string accessToken, HttpClient httpClient, Dictionary<string, SemaphoreSlim> apiRateLimits)
         {
             AccessToken = accessToken;
+            this.httpClient = httpClient;
             jsonSerializerSettings = new HelperMethods().GetBlockKitSerializer();
+            this.apiRateLimits = apiRateLimits;
         }
 
         public async Task ApiTest(string error = null, params string[] properties)
@@ -235,7 +244,7 @@ namespace golf1052.SlackAPI
             await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
         }
 
-        public static Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)
+        public Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegments("oauth", "authorize");
             if (string.IsNullOrEmpty(clientId))
@@ -276,7 +285,7 @@ namespace golf1052.SlackAPI
             return new Uri(url);
         }
 
-        public static async Task<SlackCore> CompleteOAuth(string clientId, string clientSecret, string code, Uri redirectUri = null)
+        public async Task<SlackCore> CompleteOAuth(string clientId, string clientSecret, string code, Uri redirectUri = null)
         {
             if (string.IsNullOrEmpty(clientId))
             {
@@ -301,44 +310,50 @@ namespace golf1052.SlackAPI
             {
                 url.SetQueryParam("redirect_uri", redirectUri.ToString());
             }
-            JObject response = await SlackCore.DoSlackCall(new Uri(url));
+            JObject response = await DoSlackCall(new Uri(url));
             string accessToken = (string)response["access_token"];
             return new SlackCore(accessToken);
         }
 
-        public static async Task<JObject> DoSlackCall(string endpoint, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
+        public async Task<JObject> DoSlackCall(string endpoint, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment(endpoint);
-            return await SlackCore.DoSlackCall(url, all, method, args);
+            return await DoSlackCall(url, all, method, args);
         }
 
         public async Task<JObject> DoAuthSlackCall(Uri uri, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
         {
             Url url = new Url(uri.ToString());
             url.SetQueryParam("token", AccessToken);
-            return await SlackCore.DoSlackCall(new Uri(url), all, method, args);
+            return await DoSlackCall(new Uri(url), all, method, args);
         }
 
-        public static async Task<JObject> DoSlackCall(Uri uri, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
+        public async Task<JObject> DoSlackCall(Uri uri, bool all = false, HttpMethod method = null, IEnumerable<KeyValuePair<string, string>> args = null)
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response = null;
+            Func<HttpRequestMessage> requestFactory;
             if (method == null)
             {
                 method = HttpMethod.Get;
             }
             if (method == HttpMethod.Get)
             {
-                response = await httpClient.GetAsync(uri);
+                requestFactory = () => new HttpRequestMessage(method, uri);
             }
             else if (method == HttpMethod.Post)
             {
-                response = await httpClient.PostAsync(uri, new FormUrlEncodedContent(args));
+                requestFactory = () =>
+                {
+                    HttpRequestMessage request = new HttpRequestMessage(method, uri);
+                    request.Content = new FormUrlEncodedContent(args);
+                    return request;
+                };
             }
             else
             {
                 throw new ArgumentException("Can only use GET and POST", nameof(method));
             }
+
+            HttpResponseMessage response = await DoSlackCall(requestFactory);
             string responseString = await response.Content.ReadAsStringAsync();
             JObject responseObject = JObject.Parse(responseString);
             bool ok = (bool)responseObject["ok"];
@@ -388,6 +403,59 @@ namespace golf1052.SlackAPI
                     }
                 }
                 throw new Exception($"Error: {(string)responseObject["error"]}\nURL: {uri.ToString()}\nMethod: {method.ToString()}\nArgs: {argsString}");
+            }
+        }
+
+        private async Task<HttpResponseMessage> DoSlackCall(Func<HttpRequestMessage> requestFactory)
+        {
+            HttpRequestMessage request = requestFactory();
+            string path = request.RequestUri.AbsolutePath;
+            if (!apiRateLimits.ContainsKey(path))
+            {
+                apiRateLimits.Add(path, new SemaphoreSlim(1));
+            }
+
+            // We want API calls to only be blocked once a rate limit is hit on a API, so if the semaphore count for
+            // a API is 0 then don't call the API until we're no longer rate limited on that API
+            if (apiRateLimits[path].CurrentCount == 0)
+            {
+                await apiRateLimits[path].WaitAsync();
+                // When we call Wait and pass it we decrement the semaphore count, however we don't actually need to
+                // block other threads so immediately release it
+                apiRateLimits[path].Release();
+            }
+            else if (apiRateLimits[path].CurrentCount > 1)
+            {
+                throw new Exception($"Semaphore count for {path} is greater than 1");
+            }
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response;
+            }
+            else
+            {
+                if ((int)response.StatusCode == 429)
+                {
+                    TimeSpan? timeToWait = response.Headers.RetryAfter.Delta;
+                    if (timeToWait.HasValue)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Hit rate limit. Waiting {timeToWait}");
+                        await apiRateLimits[path].WaitAsync();
+                        await Task.Delay(timeToWait.Value);
+                        apiRateLimits[path].Release();
+                        return await DoSlackCall(requestFactory);
+                    }
+                    else
+                    {
+                        throw new Exception("Slack did not return Retry-After header");
+                    }
+                }
+                else
+                {
+                    return response;
+                }
             }
         }
     }

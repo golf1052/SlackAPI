@@ -244,6 +244,58 @@ namespace golf1052.SlackAPI
             await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
         }
 
+        public async Task<SlackFile> FilesUpload(byte[] file, string filename = null, string title = null, List<string> channels = null, string filetype = null, string initialComment = null, string threadTs = null)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("files.upload");
+            url.SetQueryParam("token", AccessToken);
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = "uploaded_file";
+            }
+            content.Add(new ByteArrayContent(file), "file", filename);
+            if (!string.IsNullOrEmpty(title))
+            {
+                content.Add(new StringContent(title), "title");
+            }
+            if (channels != null && channels.Count > 0)
+            {
+                content.Add(new StringContent(string.Join(",", channels)), "channels");
+            }
+            if (!string.IsNullOrEmpty(filetype))
+            {
+                content.Add(new StringContent(filetype), "filetype");
+            }
+            if (!string.IsNullOrEmpty(initialComment))
+            {
+                content.Add(new StringContent(initialComment), "initial_comment");
+            }
+            if (!string.IsNullOrEmpty(threadTs))
+            {
+                content.Add(new StringContent(threadTs), "thread_ts");
+            }
+
+            Func<HttpRequestMessage> requestFactory = () =>
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Content = content;
+                return request;
+            };
+
+            HttpResponseMessage response = await DoSlackCall(requestFactory);
+            string responseString = await response.Content.ReadAsStringAsync();
+            JObject responseObject = JObject.Parse(responseString);
+            bool ok = (bool)responseObject["ok"];
+            if (ok)
+            {
+                return JsonConvert.DeserializeObject<SlackFile>(responseObject["file"].ToString());
+            }
+            else
+            {
+                throw new Exception($"Error: {(string)responseObject["error"]}\nURL: {url}");
+            }
+        }
+
         public Uri StartOAuth(string clientId, List<SlackConstants.SlackScope> scopes, Uri redirectUri = null, string state = null, string team = null)
         {
             Url url = new Url(SlackConstants.BaseUrl).AppendPathSegments("oauth", "authorize");

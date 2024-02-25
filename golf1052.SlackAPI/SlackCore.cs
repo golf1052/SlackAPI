@@ -171,7 +171,7 @@ namespace golf1052.SlackAPI
             return conversations;
         }
 
-        public async Task ChatPostMessage(string text, string channel, bool? asUser = null, JObject attachments = null,
+        public async Task<JObject> ChatPostMessage(string text, string channel, bool? asUser = null, JObject attachments = null,
             List<IBlock> blocks = null, string iconEmoji = null, string iconUrl = null, bool? linkNames = null,
             bool? mrkdwn = null, string parse = null, bool? replyBroadcast = null, string threadTs = null,
             bool? unfurlLinks = null, bool? unfurlMedia = null, string username = null)
@@ -232,7 +232,42 @@ namespace golf1052.SlackAPI
             {
                 args.Add("username", username);
             }
-            await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
+            return await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
+        }
+
+        public async Task<JObject> ChatUpdate(string text, string channel, string timestamp, bool? asUser, JObject attachments = null,
+            List<IBlock> blocks = null, bool? linkNames = null, string parse = null, bool? replyBroadcast = null)
+        {
+            Url url = new Url(SlackConstants.BaseUrl).AppendPathSegment("chat.update");
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("text", text);
+            args.Add("channel", channel);
+            args.Add("ts", timestamp);
+            if (asUser != null)
+            {
+                args.Add("as_user", asUser.Value.ToString());
+            }
+            if (attachments != null)
+            {
+                args.Add("attachments", attachments.ToString(Formatting.None));
+            }
+            if (blocks != null)
+            {
+                args.Add("blocks", JsonConvert.SerializeObject(blocks, Formatting.None, jsonSerializerSettings));
+            }
+            if (linkNames != null)
+            {
+                args.Add("link_names", linkNames.Value.ToString());
+            }
+            if (parse != null)
+            {
+                args.Add("parse", parse);
+            }
+            if (replyBroadcast != null)
+            {
+                args.Add("reply_broadcast", replyBroadcast.Value.ToString());
+            }
+            return await DoAuthSlackCall(new Uri(url), false, HttpMethod.Post, args);
         }
 
         public async Task ViewsPublish(string userId, SlackViewObject view)

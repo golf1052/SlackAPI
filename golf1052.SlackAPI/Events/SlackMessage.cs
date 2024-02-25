@@ -47,6 +47,9 @@ namespace golf1052.SlackAPI.Events
         [JsonProperty("user")]
         public string User { get; private set; }
 
+        [JsonProperty("bot_id")]
+        public string BotId { get; private set; }
+
         [JsonProperty("text")]
         public string Text { get; private set; }
 
